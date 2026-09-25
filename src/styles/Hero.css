@@ -2,7 +2,6 @@
 .hero-section {
   background: #111827;
   color: #f9fafb;
-  text-align: center;
   min-height: 100vh;
   display: flex;
   align-items: center;
@@ -10,6 +9,88 @@
   padding: 4rem 2rem;
   scroll-margin-top: 0;
   animation: fadeIn 0.6s ease-in;
+}
+
+.hero-content {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: min(1200px, 100%);
+  gap: 3rem;
+}
+
+.hero-visual {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+  min-width: 280px;
+}
+
+.portrait-shell {
+  position: relative;
+  width: 320px;
+  height: 320px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.portrait-ring {
+  width: 100%;
+  height: 100%;
+  transform: rotate(-90deg);
+  filter: drop-shadow(0 0 22px rgba(99, 102, 241, 0.38));
+}
+
+.portrait-ring-track,
+.portrait-ring-progress {
+  fill: none;
+  stroke-width: 10;
+}
+
+.portrait-ring-progress {
+  stroke: #8b5cf6;
+  stroke-linecap: round;
+  transition: stroke-dashoffset 120ms linear;
+}
+
+.portrait-image {
+  position: absolute;
+  width: 220px;
+  height: 220px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2.5rem;
+  font-weight: 800;
+  letter-spacing: 0.15rem;
+  color: #f9fafb;
+  background: linear-gradient(135deg, rgba(99, 102, 241, 0.9), rgba(59, 130, 246, 0.7));
+  border: 6px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 20px 45px rgba(15, 23, 42, 0.45);
+  opacity: 0;
+  transform: scale(0.9);
+}
+
+.portrait-image.hidden {
+  opacity: 0;
+  transform: scale(0.9);
+  /* Instant hide without smooth transition */
+  transition: none; 
+}
+
+.portrait-image.visible {
+  opacity: 1;
+  transform: scale(1);
+  /* Instant snap to visible */
+  transition: none; 
+}
+
+.hero-copy {
+  text-align: left;
+  flex: 1;
 }
 
 .hero-section h1 {
@@ -59,6 +140,26 @@
   .hero-section {
     min-height: 80vh;
     padding: 3rem 1.5rem;
+  }
+
+  .hero-content {
+    flex-direction: column;
+    gap: 2rem;
+  }
+
+  .hero-copy {
+    text-align: center;
+  }
+
+  .portrait-shell {
+    width: 260px;
+    height: 260px;
+  }
+
+  .portrait-image {
+    width: 180px;
+    height: 180px;
+    font-size: 2rem;
   }
 
   .hero-section h1 {

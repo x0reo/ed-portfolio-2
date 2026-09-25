@@ -1,0 +1,81 @@
+/* Fullscreen Overlay Container */
+.loading-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background-color: #111827;
+  overflow: hidden;
+}
+
+/* Hide background during retraction so the page underneath is revealed */
+.loading-overlay.retracting {
+  background-color: transparent;
+}
+
+/* Vertical Track pinned to the far right side, spanning 100% height */
+.vertical-track {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 6px;
+  height: 100vh;
+  background: hidden;
+  overflow: visible;
+  z-index: 2;
+}
+
+/* Fill bar growing downwards */
+.vertical-fill {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  background: #f9fafb;
+  transition: height 0.05s linear;
+}
+
+/* Dynamic Percentage Label positioned on the fill's left side */
+.percent-label {
+  position: absolute;
+  bottom: 20px;
+  right: 14px;
+  transform: translateY(50%);
+  color: #f9fafb;
+  font-size: 0.85rem;
+  font-weight: 700;
+  font-family: monospace;
+  white-space: nowrap;
+  pointer-events: none;
+}
+
+/* Wipe Panel: Expands leftward from the right edge */
+.wipe-panel {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 0%;
+  background-color: #f9fafb;
+  transition: width 0.5s cubic-bezier(0.77, 0, 0.175, 1), 
+              transform 0.5s cubic-bezier(0.77, 0, 0.175, 1);
+  z-index: 1;
+}
+
+/* Expansion Phase: Full screen cover from right to left */
+.loading-overlay.expanding .vertical-track {
+  display: none;
+}
+
+.loading-overlay.expanding .wipe-panel {
+  width: 100%;
+}
+
+/* Retraction Phase: Pull curtain to the left */
+.loading-overlay.retracting .vertical-track {
+  display: none;
+}
+
+.loading-overlay.retracting .wipe-panel {
+  width: 100%;
+  transform: translateX(-100%);
+}

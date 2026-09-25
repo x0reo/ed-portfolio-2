@@ -1,8 +1,9 @@
 import { render, screen } from '@testing-library/react';
 import App from './App';
 
-test('renders learn react link', () => {
+test('renders the hero portrait placeholder and call-to-action', () => {
   render(<App />);
-  const linkElement = screen.getByText(/learn react/i);
-  expect(linkElement).toBeInTheDocument();
+
+  expect(screen.getByRole('img', { name: /profile portrait/i })).toBeInTheDocument();
+  expect(screen.getByRole('button', { name: /learn more/i })).toBeInTheDocument();
 });

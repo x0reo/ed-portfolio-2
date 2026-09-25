@@ -6,18 +6,58 @@ import AboutMe from './components/AboutMe';
 import Projects from './components/Projects';
 import Skills from './components/Skills';
 import Contact from './components/Contact';
+import Loading from './components/Loading';
 
 const SECTIONS = ['hero', 'aboutme', 'projects', 'skills', 'contact'];
 
+const getAssetUrls = () => {
+  if (typeof require.context !== 'undefined') {
+    const context = require.context('./assets', true, /\.(png|jpe?g|svg|webp)$/);
+    return context.keys().map(context);
+  }
+
+  return [];
+};
+
 function App() {
+  const [isLoading, setIsLoading] = useState(true);
+  const [isAllAssetsReady, setIsAllAssetsReady] = useState(false);
+
   const [activeSection, setActiveSection] = useState('hero');
   const activeSectionRef = useRef('hero');
-  // Flag to prevent the observer from updating the URL while a smooth scroll is happening
   const isScrollingToSection = useRef(false);
   const lastScrollPosition = useRef(0);
   const scrollTimeoutRef = useRef(null);
 
-  // Set initial active section from URL fragment on mount
+  // Preload ALL assets in the assets folder
+  useEffect(() => {
+    const imageUrls = getAssetUrls();
+
+    if (imageUrls.length === 0) {
+      setIsAllAssetsReady(true);
+      return;
+    }
+
+    const preloadImage = (url) => {
+      return new Promise((resolve) => {
+        const img = new Image();
+        img.src = url;
+        if (img.complete) {
+          resolve(url);
+        } else {
+          img.onload = () => resolve(url);
+          img.onerror = () => resolve(url); // Resolve anyway so broken assets don't freeze app
+        }
+      });
+    };
+
+    // Wait until every single image is loaded
+    Promise.all(imageUrls.map((url) => preloadImage(url)))
+      .then(() => setIsAllAssetsReady(true))
+      .catch(() => setIsAllAssetsReady(true));
+  }, []);
+
+  // Set initial active section from URL fragment
   useEffect(() => {
     const hash = window.location.hash.slice(1) || 'hero';
     if (SECTIONS.includes(hash)) {
@@ -30,8 +70,10 @@ function App() {
     }
   }, []);
 
-  // Handle active section updates using IntersectionObserver
+  // Intersection Observer
   useEffect(() => {
+    if (isLoading) return undefined;
+
     const observerCallback = (entries) => {
       if (isScrollingToSection.current) return;
 
@@ -47,7 +89,6 @@ function App() {
       });
     };
 
-    // Trigger when the section crosses the middle of the viewport
     const observerOptions = {
       root: null,
       rootMargin: '-40% 0px -40% 0px',
@@ -62,14 +103,13 @@ function App() {
     });
 
     return () => observer.disconnect();
-  }, []);
+  }, [isLoading]);
 
-  // Detect manual scrolling to clear the scrolling flag
+  // Scroll listener
   useEffect(() => {
     let scrollEventTimeout;
 
     const handleScroll = () => {
-      // If user scrolls manually, clear the scrolling flag to re-enable observer
       if (isScrollingToSection.current) {
         isScrollingToSection.current = false;
         if (scrollTimeoutRef.current) {
@@ -78,10 +118,7 @@ function App() {
         }
       }
 
-      // Clear existing timeout
       clearTimeout(scrollEventTimeout);
-
-      // Update last scroll position after scroll ends
       scrollEventTimeout = setTimeout(() => {
         lastScrollPosition.current = window.scrollY;
       }, 150);
@@ -104,7 +141,6 @@ function App() {
       activeSectionRef.current = sectionId;
       window.history.replaceState(null, '', `#${sectionId}`);
 
-      // Re-enable observer after smooth scroll animation finishes
       scrollTimeoutRef.current = setTimeout(() => {
         isScrollingToSection.current = false;
       }, 800);
@@ -113,10 +149,17 @@ function App() {
 
   return (
     <div className="App">
+      {isLoading && (
+        <Loading
+          isReady={isAllAssetsReady} 
+          onComplete={() => setIsLoading(false)} 
+        />
+      )}
+
       <Navigation activeSection={activeSection} onSectionClick={scrollToSection} sections={SECTIONS} />
 
       <main className="main-content">
-        <Hero onNavigate={scrollToSection} />
+        <Hero onNavigate={scrollToSection} isAppLoading={isLoading} />
         <AboutMe />
         <Projects />
         <Skills />
