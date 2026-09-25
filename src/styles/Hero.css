@@ -1,4 +1,3 @@
-/* Hero Section */
 .hero-section {
   background: #111827;
   color: #f9fafb;
@@ -22,7 +21,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  flex: 1;
+  flex: 2;
   min-width: 280px;
 }
 
@@ -89,7 +88,7 @@
 
 .hero-copy {
   text-align: left;
-  flex: 1;
+  flex: 3;
 }
 
 .hero-section h1 {
@@ -108,25 +107,198 @@
   font-size: 1.1rem;
   margin-bottom: 2rem;
   opacity: 0.95;
+  min-height: 4.5rem;
 }
 
-.cta-button {
-  padding: 1rem 2.5rem;
-  font-size: 1.1rem;
+.hero-copy .hero-intro,
+.hero-copy .hero-name {
+  opacity: 0;
+  transform: translateY(20px);
+}
+
+.hero-copy.animate-headers .hero-intro,
+.hero-copy.ready-typewriter .hero-intro {
+  animation: fadeInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.hero-copy.animate-headers .hero-name,
+.hero-copy.ready-typewriter .hero-name {
+  animation: fadeInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) 1s forwards;
+}
+
+.hero-cards-wrapper {
+  display: inline-flex;
+  align-items: stretch;
+  gap: 1rem;
+  margin-top: 0.5rem;
+}
+
+.resume-card-container {
+  display: inline-flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 0.2rem;
+  padding: 0.4rem;
+  background-color: #1f2937;
+  border-radius: 6px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
+  width: 110px;
+}
+
+.resume-card-container.hidden {
+  opacity: 0;
+  transform: scale(0.95);
+  pointer-events: none;
+  transition: none;
+}
+
+.resume-card-container.visible {
+  opacity: 1;
+  transform: scale(1);
+  pointer-events: auto;
+  transition: none;
+}
+
+.resume-card-button {
+  position: relative;
+  width: 100%;
+  height: 40px;
+  background-color: #4b4b4c;
+  border-radius: 4px;
+  overflow: hidden;
+  text-decoration: none;
+  display: block;
+}
+
+.resume-button-bg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
   background-color: #6366f1;
-  color: #f9fafb;
-  border: none;
-  border-radius: 50px;
-  cursor: pointer;
-  font-weight: 600;
-  transition: all 0.3s ease;
-  box-shadow: 0 4px 15px rgba(99, 102, 241, 0.4);
+  transform: translateX(-100%);
+  transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: 1;
 }
 
-.cta-button:hover {
-  background-color: #4f46e5;
-  transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(99, 102, 241, 0.6);
+.resume-card-button:hover .resume-button-bg {
+  transform: translateX(0);
+}
+
+.resume-button-content {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: space-between;
+}
+
+.pdf-label {
+  font-size: 0.65rem;
+  font-weight: 900;
+  color: #6366f1;
+  margin: 3px 0 0 4px;
+  line-height: 1;
+  letter-spacing: 0.05rem;
+  transition: color 0.3s ease;
+}
+
+.download-icon-large {
+  width: 48px;
+  height: 100%;
+  color: #1f2937;
+  margin-right: 0;
+  transition: color 0.3s ease;
+}
+
+.resume-card-button:hover .pdf-label {
+  color: #1f2937;
+}
+
+.resume-card-label {
+  align-self: flex-end;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #e5e7eb;
+  letter-spacing: 0.04rem;
+}
+
+.hero-contact-card-container {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  grid-template-rows: repeat(2, 1fr);
+  gap: 0.5rem 2.5rem;
+  padding: 0.5rem 0.8rem;
+  background-color: #1f2937;
+  border-radius: 6px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
+  align-items: center;
+}
+
+.hero-contact-card-container.hidden {
+  opacity: 0;
+  transform: scale(0.95);
+  pointer-events: none;
+  transition: none;
+}
+
+.hero-contact-card-container.visible {
+  opacity: 1;
+  transform: scale(1);
+  pointer-events: auto;
+  transition: none;
+}
+
+.hero-contact-link {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.3rem;
+  border-radius: 4px;
+  color: #ffffff;
+  text-decoration: none;
+  font-size: 0.6rem;
+  font-weight: 600;
+}
+
+.hero-contact-link:hover {
+  background-color: #4b4b4c80;
+  transition: background-color 0.6s ease;
+}
+
+.hero-contact-icon {
+  width: 16px;
+  height: 16px;
+  color: #ffffff;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.typewriter-cursor {
+  font-weight: 700;
+  color: #8b5cf6;
+  margin-left: 2px;
+  animation: cursorBlink 0.7s infinite;
+}
+
+@keyframes cursorBlink {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0;
+  }
 }
 
 @keyframes fadeIn {
@@ -153,6 +325,10 @@
 
   .hero-copy {
     text-align: center;
+  }
+
+  .hero-cards-wrapper {
+    justify-content: center;
   }
 
   .portrait-shell {
