@@ -17,7 +17,7 @@
   position: absolute;
   top: 0;
   right: 0;
-  width: 6px;
+  width: 10px;
   height: 100vh;
   background: hidden;
   overflow: visible;
@@ -30,8 +30,11 @@
   top: 0;
   left: 0;
   width: 100%;
+  height: 100%;
   background: #f9fafb;
-  transition: height 0.05s linear;
+  transform-origin: top;
+  transform: scaleY(0);
+  will-change: transform;
 }
 
 /* Dynamic Percentage Label positioned on the fill's left side */

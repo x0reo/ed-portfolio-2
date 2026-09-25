@@ -1,19 +1,26 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import '../styles/Loading.css';
 
 function Loading({ isReady = true, onComplete = () => {}, duration = 2000 }) {
   const [percent, setPercent] = useState(0);
-  const [phase, setPhase] = useState('loading'); // 'loading' | 'expanding' | 'retracting'
+  const [phase, setPhase] = useState('loading');
+  
+  const fillRef = useRef(null);
 
   useEffect(() => {
     let frameId;
     const start = performance.now();
-    const holdDelay = 1000;
+    const holdDelay = 300;
 
     const tick = (time) => {
       const linear = Math.min(1, (time - start) / duration);
       const currentPercent = Math.floor(linear * 100);
+      
       setPercent(currentPercent);
+
+      if (fillRef.current) {
+        fillRef.current.style.transform = `scaleY(${linear})`;
+      }
 
       if (linear < 1) {
         frameId = window.requestAnimationFrame(tick);
@@ -21,10 +28,8 @@ function Loading({ isReady = true, onComplete = () => {}, duration = 2000 }) {
         if (isReady) {
           setTimeout(() => {
             setPhase('expanding');
-            
             setTimeout(() => {
               setPhase('retracting');
-              
               setTimeout(() => {
                 onComplete();
               }, 500);
@@ -44,7 +49,7 @@ function Loading({ isReady = true, onComplete = () => {}, duration = 2000 }) {
     <div className={`loading-overlay ${phase}`}>
       {phase === 'loading' && (
         <div className="vertical-track">
-          <div className="vertical-fill" style={{ height: `${percent}%` }}>
+          <div ref={fillRef} className="vertical-fill">
             <span className="percent-label">{percent}%</span>
           </div>
         </div>

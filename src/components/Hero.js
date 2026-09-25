@@ -4,11 +4,15 @@ import heroImage from '../assets/heroimg.jpg';
 
 function Hero({ onNavigate, isAppLoading = false }) {
   const heroRef = useRef(null);
+  const circleProgressRef = useRef(null); // Ref to drive direct DOM manipulation for cross-browser support
+  
   const [isHeroVisible, setIsHeroVisible] = useState(false);
-  const [progress, setProgress] = useState(0);
   const [portraitState, setPortraitState] = useState('hidden');
 
-  // Intersection Observer to detect when Hero section enters viewport
+  const radius = 128;
+  const circumference = 2 * Math.PI * radius;
+
+  // Intersection Observer
   useEffect(() => {
     const heroElement = heroRef.current;
     if (!heroElement) return undefined;
@@ -19,15 +23,14 @@ function Hero({ onNavigate, isAppLoading = false }) {
           setIsHeroVisible(true);
         }
       },
-      {
-        threshold: 0.5,
-      }
+      { threshold: 0.5 }
     );
 
     observer.observe(heroElement);
     return () => observer.disconnect();
   }, []);
 
+  // Animation Sequence
   useEffect(() => {
     if (!isHeroVisible || isAppLoading) return undefined;
 
@@ -36,46 +39,42 @@ function Hero({ onNavigate, isAppLoading = false }) {
     const duration = 2200;
     const start = performance.now();
 
-    setProgress(0);
-    setPortraitState('hidden'); // 1. Initially hidden
+    setPortraitState('hidden');
 
     const tick = (time) => {
       const linearProgress = Math.min(1, (time - start) / duration);
       const easedProgress = 1 - (1 - linearProgress) ** 3;
-      const nextProgress = easedProgress * 100;
+      const currentDashOffset = circumference - easedProgress * circumference;
 
-      setProgress(nextProgress);
+      if (circleProgressRef.current) {
+        circleProgressRef.current.style.strokeDashoffset = `${currentDashOffset}px`;
+      }
 
-      if (nextProgress < 100) {
+      if (linearProgress < 1) {
         frameId = window.requestAnimationFrame(tick);
       } else {
-        // 2. Ring is complete -> Immediately show image for 0.2s
+        if (circleProgressRef.current) {
+          circleProgressRef.current.style.strokeDashoffset = `0px`;
+        }
+
         setPortraitState('visible');
-
         t1 = window.setTimeout(() => {
-          // 3. Hide image for 0.2s
           setPortraitState('hidden');
-
           t2 = window.setTimeout(() => {
-            // 4. Show image permanently
             setPortraitState('visible');
-          }, 50); // 0.2s hidden duration
-        }, 50); // 0.2s visible duration
+          }, 50);
+        }, 50);
       }
     };
 
     frameId = window.requestAnimationFrame(tick);
 
-  return () => {
-    window.cancelAnimationFrame(frameId);
-    window.clearTimeout(t1);
-    window.clearTimeout(t2);
-  };
-}, [isHeroVisible, isAppLoading]);
-
-  const radius = 128;
-  const circumference = 2 * Math.PI * radius;
-  const dashOffset = circumference - (progress / 100) * circumference;
+    return () => {
+      window.cancelAnimationFrame(frameId);
+      window.clearTimeout(t1);
+      window.clearTimeout(t2);
+    };
+  }, [isHeroVisible, isAppLoading, circumference]);
 
   return (
     <section id="hero" ref={heroRef} className="section hero-section">
@@ -85,12 +84,15 @@ function Hero({ onNavigate, isAppLoading = false }) {
             <svg className="portrait-ring" viewBox="0 0 320 320">
               <circle className="portrait-ring-track" cx="160" cy="160" r={radius} />
               <circle
+                ref={circleProgressRef}
                 className="portrait-ring-progress"
                 cx="160"
                 cy="160"
                 r={radius}
-                strokeDasharray={circumference}
-                strokeDashoffset={dashOffset}
+                style={{
+                  strokeDasharray: `${circumference}px`,
+                  strokeDashoffset: `${circumference}px`,
+                }}
               />
             </svg>
             <img
@@ -102,8 +104,9 @@ function Hero({ onNavigate, isAppLoading = false }) {
         </div>
 
         <div className="section-content hero-copy">
-          <h1>Welcome to My Portfolio</h1>
-          <p>Hello! I'm a passionate developer creating amazing web experiences.</p>
+          <p className="hero-intro">Hello! I am</p>
+          <h1>Edward John Camarillo</h1>
+          <p className="hero-info">I am a passionate Software Developer with an ability to build efficient and user-friendly applications. Let's build something amazing together!</p>
           <button className="cta-button" onClick={() => onNavigate('aboutme')}>
             Learn More
           </button>
