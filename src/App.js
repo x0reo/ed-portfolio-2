@@ -26,10 +26,9 @@ function App() {
   const [activeSection, setActiveSection] = useState('hero');
   const activeSectionRef = useRef('hero');
   const isScrollingToSection = useRef(false);
-  const lastScrollPosition = useRef(0);
   const scrollTimeoutRef = useRef(null);
 
-  // Preload ALL assets in the assets folder
+  // Preload assets
   useEffect(() => {
     const imageUrls = getAssetUrls();
 
@@ -46,12 +45,11 @@ function App() {
           resolve(url);
         } else {
           img.onload = () => resolve(url);
-          img.onerror = () => resolve(url); // Resolve anyway so broken assets don't freeze app
+          img.onerror = () => resolve(url);
         }
       });
     };
 
-    // Wait until every single image is loaded
     Promise.all(imageUrls.map((url) => preloadImage(url)))
       .then(() => setIsAllAssetsReady(true))
       .catch(() => setIsAllAssetsReady(true));
@@ -70,29 +68,42 @@ function App() {
     }
   }, []);
 
-  // Intersection Observer
+  // Updated Intersection Observer Logic
   useEffect(() => {
     if (isLoading) return undefined;
 
     const observerCallback = (entries) => {
       if (isScrollingToSection.current) return;
 
-      entries.forEach((entry) => {
-        if (entry.isIntersecting) {
-          const id = entry.target.id;
-          if (id !== activeSectionRef.current) {
-            activeSectionRef.current = id;
-            setActiveSection(id);
-            window.history.replaceState(null, '', `#${id}`);
-          }
+      // Filter to only entries currently intersecting the viewport threshold
+      const visibleEntries = entries.filter((entry) => entry.isIntersecting);
+
+      if (visibleEntries.length > 0) {
+        // Pick the visible entry with the highest intersection ratio
+        const bestEntry = visibleEntries.reduce((prev, current) =>
+          current.intersectionRatio > prev.intersectionRatio ? current : prev
+        );
+
+        const newId = bestEntry.target.id;
+        if (newId !== activeSectionRef.current) {
+          activeSectionRef.current = newId;
+          setActiveSection(newId);
+          window.history.replaceState(null, '', `#${newId}`);
         }
-      });
+      } else {
+        // Fallback for top of page if scrolled back up to #hero
+        if (window.scrollY < 100 && activeSectionRef.current !== 'hero') {
+          activeSectionRef.current = 'hero';
+          setActiveSection('hero');
+          window.history.replaceState(null, '', '#hero');
+        }
+      }
     };
 
     const observerOptions = {
       root: null,
-      rootMargin: '-40% 0px -40% 0px',
-      threshold: 0,
+      rootMargin: '-20% 0px -20% 0px',
+      threshold: [0.1, 0.3, 0.5, 0.8],
     };
 
     const observer = new IntersectionObserver(observerCallback, observerOptions);
@@ -105,42 +116,29 @@ function App() {
     return () => observer.disconnect();
   }, [isLoading]);
 
-  // Scroll listener
   useEffect(() => {
-    let scrollEventTimeout;
-
     const handleScroll = () => {
-      if (isScrollingToSection.current) {
-        isScrollingToSection.current = false;
-        if (scrollTimeoutRef.current) {
-          clearTimeout(scrollTimeoutRef.current);
-          scrollTimeoutRef.current = null;
-        }
+      if (window.scrollY <= 10 && activeSectionRef.current !== 'hero' && !isScrollingToSection.current) {
+        activeSectionRef.current = 'hero';
+        setActiveSection('hero');
+        window.history.replaceState(null, '', '#hero');
       }
-
-      clearTimeout(scrollEventTimeout);
-      scrollEventTimeout = setTimeout(() => {
-        lastScrollPosition.current = window.scrollY;
-      }, 150);
     };
 
-    window.addEventListener('scroll', handleScroll);
-    return () => {
-      window.removeEventListener('scroll', handleScroll);
-      clearTimeout(scrollEventTimeout);
-    };
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
   const scrollToSection = (sectionId) => {
     const element = document.getElementById(sectionId);
     if (element) {
       isScrollingToSection.current = true;
-      lastScrollPosition.current = window.scrollY;
       element.scrollIntoView({ behavior: 'smooth' });
       setActiveSection(sectionId);
       activeSectionRef.current = sectionId;
       window.history.replaceState(null, '', `#${sectionId}`);
 
+      if (scrollTimeoutRef.current) clearTimeout(scrollTimeoutRef.current);
       scrollTimeoutRef.current = setTimeout(() => {
         isScrollingToSection.current = false;
       }, 800);
