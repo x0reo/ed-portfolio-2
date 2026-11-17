@@ -1,57 +1,84 @@
 .projects-section {
-  background: #111827;
+  position: relative;
   min-height: 100vh;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+}
+
+.projects-three-bg {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.projects-layout {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.projects-carousel-wrapper {
+  width: 100%;
+  max-width: 420px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.projects-heading {
+  width: 100%;
+  text-align: left;
+  margin-bottom: 0.5rem;
+}
+
+.carousel-arrow-btn {
+  width: 44px;
+  height: 36px;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 4rem 2rem;
-  animation: fadeIn 0.6s ease-in;
-}
-
-.projects-section h2 {
-  font-size: 2.5rem;
-  margin-bottom: 3rem;
-  color: #6366f1;
-  text-align: center;
-  width: 100%;
-}
-
-.projects-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 2rem;
-  width: 100%;
-}
-
-.project-card {
-  background: #1f2937;
-  padding: 2rem;
-  border-radius: 10px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
-  transition: all 0.3s ease;
+  border-radius: 8px;
+  border: 1px solid rgba(148, 163, 184, 0.25);
+  background: rgba(15, 23, 42, 0.65);
+  color: #cbd5e1;
   cursor: pointer;
+  transition: all 0.2s ease;
 }
 
-.project-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 8px 25px rgba(99, 102, 241, 0.2);
-}
-
-.project-card h3 {
+.carousel-arrow-btn:hover {
   color: #6366f1;
-  margin-bottom: 1rem;
-  font-size: 1.3rem;
+  border-color: #6366f1;
+  background: rgba(99, 102, 241, 0.12);
 }
 
-.project-card p {
-  color: #d1d5db;
-  line-height: 1.6;
+.projects-vertical-list {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+  overflow: hidden;
 }
 
-@keyframes fadeIn {
+.projects-vertical-list.slide-from-up {
+  animation: listSlideDown 0.28s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.projects-vertical-list.slide-from-down {
+  animation: listSlideUp 0.28s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@keyframes listSlideDown {
   from {
-    opacity: 0;
-    transform: translateY(20px);
+    opacity: 0.45;
+    transform: translateY(-22px);
   }
   to {
     opacity: 1;
@@ -59,17 +86,84 @@
   }
 }
 
+@keyframes listSlideUp {
+  from {
+    opacity: 0.45;
+    transform: translateY(22px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.project-slot-btn {
+  width: 100%;
+  padding: 1rem 1.25rem;
+  border-radius: 12px;
+  border: 1px solid rgba(148, 163, 184, 0.2);
+  background: rgba(15, 23, 42, 0.65);
+  color: #f8fafc;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.6rem;
+  text-align: left;
+  transition: all 0.25s ease;
+}
+
+.project-slot-btn.is-adjacent {
+  opacity: 0.62;
+  transform: scale(0.96);
+  cursor: pointer;
+}
+
+.project-slot-btn.is-adjacent:hover {
+  opacity: 0.9;
+  border-color: rgba(99, 102, 241, 0.55);
+  transform: scale(0.98);
+}
+
+.project-slot-btn.is-selected {
+  opacity: 1;
+  transform: scale(1);
+  border-color: #6366f1;
+  background: rgba(99, 102, 241, 0.14);
+  box-shadow: 0 4px 20px rgba(99, 102, 241, 0.18);
+  cursor: default;
+}
+
+.project-slot-name {
+  font-size: 1.1rem;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+}
+
+.project-slot-stacks {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 0.7rem;
+}
+
+.stack-icon-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  color: #94a3b8;
+  transition: color 0.2s ease;
+}
+
+.project-slot-btn.is-selected .stack-icon-badge {
+  color: #a5b4fc;
+}
+
 @media (max-width: 768px) {
-  .projects-section {
-    min-height: 80vh;
-    padding: 3rem 1.5rem;
+  .projects-layout {
+    justify-content: center;
   }
-
-  .projects-section h2 {
-    font-size: 2rem;
-  }
-
-  .projects-grid {
-    grid-template-columns: 1fr;
+  .projects-three-bg {
+    opacity: 0.35;
   }
 }
