@@ -132,7 +132,6 @@
   }
 }
 
-/* Responsive adjustments */
 @media (max-width: 868px) {
   .about-container {
     flex-direction: column-reverse;

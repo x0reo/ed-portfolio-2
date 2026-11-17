@@ -89,6 +89,15 @@ function Hero({ isAppLoading = false }) {
     };
   }, [isHeroVisible, isAppLoading, circumference]);
 
+  const handleDownloadResume = () => {
+    const link = document.createElement('a');
+    link.href = resumePdf;
+    link.download = 'Edward_John_Camarillo_Resume.pdf';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
   useEffect(() => {
     if (textState !== 'ready-typewriter') return undefined;
 
@@ -178,9 +187,9 @@ function Hero({ isAppLoading = false }) {
             
             {/* Left Card: Download Resume */}
             <div className={`resume-card-container ${resumeBlinkState}`}>
-              <a
-                href={resumePdf}
-                download="Resume.pdf"
+              <button
+                type="button"
+                onClick={handleDownloadResume}
                 className="resume-card-button"
               >
                 <div className="resume-button-bg" />
@@ -200,7 +209,7 @@ function Hero({ isAppLoading = false }) {
                     <line x1="12" y1="15" x2="12" y2="3" />
                   </svg>
                 </div>
-              </a>
+              </button>
               <span className="resume-card-label">Resume</span>
             </div>
 
