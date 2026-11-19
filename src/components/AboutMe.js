@@ -7,6 +7,8 @@ import about3 from '../assets/aboutimg3.jpg';
 
 const IMAGES = [about1, about2, about3];
 
+// TODO: Improve AboutMe section details and image transitions
+// TODO: Add horizontal buttons to navigate through the images in the AboutMe section
 function AboutMe() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [animState, setAnimState] = useState('idle');

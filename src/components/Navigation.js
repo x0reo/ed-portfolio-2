@@ -12,6 +12,7 @@ import {
 } from 'react-icons/fa';
 import '../styles/Navigation.css';
 
+// TODO: Add name initials at the top of the sidebar with a hover effect to show full name
 function Navigation({ activeSection, onSectionClick, sections }) {
   const [isExpanded, setIsExpanded] = useState(false);
 

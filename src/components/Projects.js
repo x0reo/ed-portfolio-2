@@ -56,6 +56,7 @@ const PROJECTS_DATA = [
   },
 ];
 
+// TODO: Improve layouting and overall visual model
 function Projects() {
   const stackRef = useRef(null);
   const [selectedIndex, setSelectedIndex] = useState(0);
